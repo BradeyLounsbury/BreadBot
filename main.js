@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
+const client = new Discord.Client();
 
 //messages that start with this trigger bot
 const prefix = '-';
@@ -36,4 +36,4 @@ client.on('message', message => {
 });
 
 //keep at end
-client.login('MTAwMjM2NDIwMDc3OTI1NTgzOQ.GDll_V.33Eb41Qcy_HHE_l4Js5xqE5EW0llLYxro-9S4o')
+client.login(process.env.token);
