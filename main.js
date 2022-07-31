@@ -51,6 +51,12 @@ client.on('messageCreate', message => {
         message.channel.send('pong!');
         console.log('BreadBot pinged, or is it pingged');
     }
+    else if (command === 'woman' || command === 'Woman') {
+        message.channel.send('dumb broad');
+    }
+    else if (command === 'women' || command === 'Women') {
+        message.channel.send('dumb broads');
+    }
 });
 
 // keep at end
