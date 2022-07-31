@@ -1,10 +1,38 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { token } = require('./config.json');
 
 const client = new Client({ intents: [
 	GatewayIntentBits.Guilds,
 	GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
 ] });
+client.slashCommands = new Collection();
+client.prefixCommands = new Collection();
+
+const slashCommandsPath = path.join(__dirname, 'slash-commands');
+const prefixCommandsPath = path.join(__dirname, 'prefix-commands');
+
+const slashCommandFiles = fs.readdirSync(slashCommandsPath).filter(file => file.endsWith('.js'));
+const prefixCommandFiles = fs.readdirSync(prefixCommandsPath).filter(file => file.endsWith('.js'));
+
+// map collection of slash commands
+for (const file of slashCommandFiles) {
+	const filePath = path.join(slashCommandsPath, file);
+	const command = require(filePath);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.slashCommands.set(command.data.name, command);
+}
+// map collection of prefix commands
+for (const file of prefixCommandFiles) {
+	const filePath = path.join(prefixCommandsPath, file);
+	const command = require(filePath);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.prefixCommands.set(command.name, command);
+}
 
 // debug > 0 turns debugging info on
 const debug = 0;
@@ -12,24 +40,31 @@ const debug = 0;
 // messages that start with this trigger the bot
 const prefix = '-';
 
-// const fs = require('fs');
-
-// client.commands = new Client.Collection();
-
-// const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
-// for (const file of commandFiles) {
-//     const command = require(`./commands/${file}`);
-
-//     client.commands.set(command.name, command);
-// }
 
 // console log
 client.once('ready', () => {
     console.log('BreadBot is online\n');
 });
 
-client.on('messageCreate', message => {
+// slash commands
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isChatInputCommand()) return;
 
+    const command = client.slashCommands.get(interaction.commandName);
+
+	if (!command) return;
+
+	try {
+		await command.execute(interaction);
+	}
+    catch (error) {
+		console.error(error);
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+	}
+});
+
+// prefix commands
+client.on('messageCreate', message => {
     if (debug) {
         console.log('msg read');
     }
@@ -43,21 +78,19 @@ client.on('messageCreate', message => {
     }
 
     const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
+    const command = client.prefixCommands.get(commandName);
 
-    // command checks
-    if (command === 'ping') {
-        // client.commands.get('ping').execute(message, args);
-        message.channel.send('pong!');
-        console.log('BreadBot pinged, or is it pingged');
-    }
-    else if (command === 'woman' || command === 'Woman') {
-        message.channel.send('dumb broad');
-    }
-    else if (command === 'women' || command === 'Women') {
-        message.channel.send('dumb broads');
-    }
+    if (!command) return;
+
+	try {
+		command.execute(message);
+	}
+    catch (error) {
+		console.error(error);
+		message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+	}
 });
 
 // keep at end
-client.login('MTAwMjM2NDIwMDc3OTI1NTgzOQ.GDll_V.33Eb41Qcy_HHE_l4Js5xqE5EW0llLYxro-9S4o');
+client.login(token);
