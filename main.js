@@ -7,6 +7,7 @@ const client = new Client({ intents: [
 	GatewayIntentBits.Guilds,
 	GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+	GatewayIntentBits.GuildVoiceStates,
 ] });
 client.slashCommands = new Collection();
 client.prefixCommands = new Collection();
@@ -23,7 +24,7 @@ for (const file of slashCommandFiles) {
 	const command = require(filePath);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
-	client.slashCommands.set(command.data.name, command);
+	client.slashCommands.set(command.name, command);
 }
 // map collection of prefix commands
 for (const file of prefixCommandFiles) {
@@ -84,7 +85,7 @@ client.on('messageCreate', message => {
     if (!command) return;
 
 	try {
-		command.execute(message);
+		command.execute(message, args, commandName);
 	}
     catch (error) {
 		console.error(error);
