@@ -2,7 +2,7 @@ module.exports = {
     name: 'women',
     aliases: ['woman'],
     description: ' ',
-    execute(message, cmd) {
+    execute(cmd, message) {
         if (cmd === 'woman') {
             message.channel.send('Dumb broad');
         }
