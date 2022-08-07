@@ -1,51 +1,33 @@
-const ytdl = require('ytdl-core-discord');
-const ytSearch = require('yt-search');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, StreamType, AudioPlayerStatus, NoSubscriberBehavior } = require('@discordjs/voice');
-// const queue = [];
+const { EmbedBuilder } = require('discord.js');
+const { QueryType } = require('discord-player');
 
 module.exports = {
     name: 'play',
-    aliases: ['skip', 'stop', 'queue', 'leave'],
-    description: 'this plays a youtube video',
-    async execute(message, args, cmd) {
-        const connection = joinVoiceChannel({
-            channelId: message.member.voice.channelId,
-            guildId: message.guildId,
-            adapterCreator: message.guild.voiceAdapterCreator,
+    description: 'plays video from youtube (still in alpha)',
+    // eslint-disable-next-line no-unused-vars
+    execute: async ({ client, commandName, message }) => {
+        if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
+
+        const queue = await client.player.createQueue(message.guildId);
+        if (!queue.connection) await queue.connect(message.member.voice.channel);
+
+        const url = message.content.substring(6);
+        const result = await client.player.search(url, {
+            requestedBy: message.author,
+            searchEngine: QueryType.AUTO,
         });
 
-        const videoFinder = async (query) => {
-            const videoResult = await ytSearch(query);
+        if (result.tracks.length === 0) return await message.channel.send('No results found :(');
 
-            return (videoResult.videos.length > 1) ? videoResult.videos[0] : null;
-        };
+        const song = result.tracks[0];
+        await queue.addTrack(song);
 
-        const video = await videoFinder(args.join(' '));
+        const embed = new EmbedBuilder()
+            .setDescription(`**[${song.title}]** has been added to the Queue`)
+            .setThumbnail(song.thumbnail)
+            .setFooter({ text: `Duration: ${song.duration}` });
+        await message.channel.send({ embeds: [embed] });
 
-        if (video) {
-            // if (queue.length() > 0) {
-            //     queue.shift();
-            // }
-            // queue.push(video);
-
-            // eslint-disable-next-line no-var
-            var stream = await ytdl(video.url, { highWaterMark: 1 << 25, filter: 'audioonly' });
-
-            const player = createAudioPlayer({
-                behaviors:
-                    { noSubscriber: NoSubscriberBehavior.Play },
-            });
-            const resource = createAudioResource(stream, { inputType: StreamType.Opus });
-
-            connection.subscribe(player);
-            await message.reply(`Now Playing ***${video.title}***`);
-            player.play(resource);
-
-            player.on(AudioPlayerStatus.AutoPaused, () => console.log('auto paused'));
-            player.on(AudioPlayerStatus.Idle, () => connection.destroy());
-            player.on(AudioPlayerStatus.Playing, () => console.log('playing'));
-            player.on(AudioPlayerStatus.Buffering, () => console.log('buffering'));
-            player.on(AudioPlayerStatus.Paused, () => console.log('paused'));
-        }
+        if (!queue.playing) await queue.play();
     },
 };

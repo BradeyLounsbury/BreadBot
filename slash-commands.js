@@ -3,7 +3,8 @@ const { REST } = require('@discordjs/rest');
 const { clientId, token } = require('./config.json');
 
 const commands = [
-	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
+	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong'),
+	new SlashCommandBuilder().setName('help').setDescription('Shows what I can do'),
 ]
     .map(command => command.toJSON());
 

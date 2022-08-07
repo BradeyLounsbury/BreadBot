@@ -1,7 +1,10 @@
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
+
+// const { REST } = require("@discordjs/rest");
+// const { Routes } = require("discord-api-types/v9");
+const { Player } = require('discord-player');
 
 const client = new Client({ intents: [
 	GatewayIntentBits.Guilds,
@@ -9,37 +12,36 @@ const client = new Client({ intents: [
     GatewayIntentBits.MessageContent,
 	GatewayIntentBits.GuildVoiceStates,
 ] });
+
 client.slashCommands = new Collection();
 client.prefixCommands = new Collection();
 
-const slashCommandsPath = path.join(__dirname, 'slash-commands');
-const prefixCommandsPath = path.join(__dirname, 'prefix-commands');
-
-const slashCommandFiles = fs.readdirSync(slashCommandsPath).filter(file => file.endsWith('.js'));
-const prefixCommandFiles = fs.readdirSync(prefixCommandsPath).filter(file => file.endsWith('.js'));
+const slashCommandFiles = fs.readdirSync('./slash-commands').filter(file => file.endsWith('.js'));
+const prefixCommandFiles = fs.readdirSync('./prefix-commands').filter(file => file.endsWith('.js'));
 
 // map collection of slash commands
 for (const file of slashCommandFiles) {
-	const filePath = path.join(slashCommandsPath, file);
-	const command = require(filePath);
-	// Set a new item in the Collection
-	// With the key as the command name and the value as the exported module
-	client.slashCommands.set(command.name, command);
+	const command = require(`./slash-commands/${file}`);
+	client.slashCommands.set(command.data.name, command);
 }
 // map collection of prefix commands
 for (const file of prefixCommandFiles) {
-	const filePath = path.join(prefixCommandsPath, file);
-	const command = require(filePath);
-	// Set a new item in the Collection
-	// With the key as the command name and the value as the exported module
+	const command = require(`./prefix-commands/${file}`);
 	client.prefixCommands.set(command.name, command);
 }
 
 // debug > 0 turns debugging info on
-const debug = 0;
+// const debug = 0;
 
 // messages that start with this trigger the bot
 const prefix = '-';
+
+client.player = new Player(client, {
+    ytdlOptions: {
+        quality: 'highestaudio',
+        highWaterMark: 1 << 25,
+    },
+});
 
 
 // console log
@@ -47,50 +49,52 @@ client.once('ready', () => {
     console.log('BreadBot is online\n');
 });
 
-// slash commands
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isChatInputCommand()) return;
+// slash command handling
+client.on('interactionCreate', interaction => {
+	async function handleCommand() {
+		if (!interaction.isChatInputCommand()) return;
 
-    const command = client.slashCommands.get(interaction.commandName);
+		console.log(`attempting to execute ${interaction.commandName}`);
+		const command = client.slashCommands.get(interaction.commandName);
 
-	if (!command) return;
+		if (!command) return;
 
-	try {
-		await command.execute(interaction);
+		try {
+			await interaction.deferReply({ ephemeral: true });
+			await command.execute({ client, interaction });
+			console.log(`executed ${interaction.commandName}`);
+		}
+		catch (error) {
+			console.error(error);
+			await interaction.reply({ content: 'There was an error while executing this command :(', ephemeral: true });
+		}
 	}
-    catch (error) {
-		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-	}
+	handleCommand();
 });
 
 // prefix commands
 client.on('messageCreate', message => {
-    if (debug) {
-        console.log('msg read');
-    }
+    async function handleCommand() {
+		// ignore if message doesn't start with prefix or is from itself
+		if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    // ignore if message doesn't start with prefix or is from itself
-    if (!message.content.startsWith(prefix) || message.author.bot) {
-        if (debug) {
-            console.log(message);
-        }
-        return;
-    }
+		const args = message.content.slice(prefix.length).split(/ +/);
+		const commandName = args.shift().toLowerCase();
+		const command = client.prefixCommands.get(commandName) || client.prefixCommands.find(a => a.aliases && a.aliases.includes(commandName));
+		console.log(`attempting to execute ${commandName}`);
 
-    const args = message.content.slice(prefix.length).split(/ +/);
-    const commandName = args.shift().toLowerCase();
-    const command = client.prefixCommands.get(commandName) || client.prefixCommands.find(a => a.aliases && a.aliases.includes(commandName));
+		if (!command) return;
 
-    if (!command) return;
-
-	try {
-		command.execute(commandName, message, args, client);
+		try {
+			command.execute({ client, commandName, message });
+			console.log(`executed ${commandName}`);
+		}
+		catch (error) {
+			console.error(error);
+			await message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
 	}
-    catch (error) {
-		console.error(error);
-		message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-	}
+	handleCommand();
 });
 
 // keep at end
