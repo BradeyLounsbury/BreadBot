@@ -1,6 +1,7 @@
 module.exports = {
     name: 'pause',
-    description: 'pauses current song',
+    aliases: 'p',
+    description: 'pauses current song    **Alias:**  *-p*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         const queue = client.player.getQueue(message.guildId);

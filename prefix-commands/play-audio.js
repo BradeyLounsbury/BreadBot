@@ -3,8 +3,9 @@ const { EmbedBuilder } = require('discord.js');
 const { QueryType } = require('discord-player');
 
 module.exports = {
-    name: 'plaud',
-    description: 'adds "official audio" at the end of the search from youtube *(still in alpha)*',
+    name: 'yt audio',
+    aliases: 'yta',
+    description: 'adds "official audio" at the end of the search from youtube *(still in alpha)*    **Alias:  *-yta*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
@@ -12,7 +13,11 @@ module.exports = {
         const queue = await client.player.createQueue(message.guildId);
         if (!queue.connection) await queue.connect(message.member.voice.channel);
 
-        const url = message.content.substring(12) + ' official audio';
+        let url;
+        // remove correct amount for url depending on command name being alias or not
+        commandName === 'yt audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(4) + ' official audio';
+        console.log(url);
+
         const result = await client.player.search(url, {
             requestedBy: message.author,
             searchEngine: QueryType.YOUTUBE_SEARCH,
