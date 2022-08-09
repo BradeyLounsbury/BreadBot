@@ -4,7 +4,8 @@ const { QueryType } = require('discord-player');
 
 module.exports = {
     name: 'play',
-    description: 'plays audio from youtube video (still in alpha)',
+    aliases: 'p',
+    description: 'plays audio from youtube video (still in alpha)    **Alias:** *-p*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
@@ -15,7 +16,7 @@ module.exports = {
         const url = message.content.substring(6);
         const result = await client.player.search(url, {
             requestedBy: message.author,
-            searchEngine: QueryType.AUTO,
+            searchEngine: QueryType.YOUTUBE_SEARCH,
         });
 
         if (result.tracks.length === 0) return await message.channel.send('No results found :(');

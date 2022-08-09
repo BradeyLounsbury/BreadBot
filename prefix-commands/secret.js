@@ -1,7 +1,7 @@
 module.exports = {
     name: 'women',
     aliases: ['woman'],
-    description: 'secret...',
+    description: '*secret...*',
     // eslint-disable-next-line no-unused-vars
     execute: ({ client, commandName, message }) => {
         if (commandName === 'woman') {

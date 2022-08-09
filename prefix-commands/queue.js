@@ -2,7 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'queue',
-    description: 'shows songs queued up',
+    aliases: 'q',
+    description: 'shows songs queued up    **Aliases:** *-q*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         const queue = client.player.getQueue(message.guildId);

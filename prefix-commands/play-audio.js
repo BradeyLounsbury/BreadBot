@@ -15,7 +15,7 @@ module.exports = {
         const url = message.content.substring(12) + ' official audio';
         const result = await client.player.search(url, {
             requestedBy: message.author,
-            searchEngine: QueryType.AUTO,
+            searchEngine: QueryType.YOUTUBE_SEARCH,
         });
 
         if (result.tracks.length === 0) return await message.channel.send('No results found :(');
