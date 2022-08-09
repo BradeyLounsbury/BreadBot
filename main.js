@@ -80,7 +80,7 @@ client.on('messageCreate', message => {
 
 		const args = message.content.slice(prefix.length).split(/ +/);
 		const commandName = args.shift().toLowerCase();
-		const command = client.prefixCommands.get(commandName) || client.prefixCommands.find(a => a.aliases && a.aliases.find(commandName));
+		const command = client.prefixCommands.get(commandName) || client.prefixCommands.find(a => a.aliases && a.aliases.has(commandName));
 		console.log(`attempting to execute ${commandName}`);
 
 		if (!command) return;
