@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const { QueryType } = require('discord-player');
 
 module.exports = {
-    name: 'play audio',
+    name: 'plaud',
     description: 'adds "official audio" at the end of the search from youtube (still in alpha)',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
