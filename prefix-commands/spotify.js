@@ -16,6 +16,7 @@ module.exports = {
         let url;
         // remove correct amount for url depending on command name being alias or not
         commandName === 'spotify' ? url = message.content.substring(9) : url = message.content.substring(4);
+        console.log(url);
 
         const result = await client.player.search(url, {
             requestedBy: message.author,
