@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const { QueryType } = require('discord-player');
 
 module.exports = {
-    name: 'play audio',
+    name: 'yt-audio',
     aliases: 'yta',
     description: 'adds "official audio" at the end of the search from youtube *(still in alpha)*    **Alias:**  *-yta*',
     // eslint-disable-next-line no-unused-vars
@@ -15,8 +15,8 @@ module.exports = {
 
         let url;
         // remove correct amount for url depending on command name being alias or not
-        commandName === 'yt audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(4) + ' official audio';
-        // console.log(url);
+        commandName === 'yt-audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(4) + ' official audio';
+        console.log(url);
 
         const result = await client.player.search(url, {
             requestedBy: message.author,
