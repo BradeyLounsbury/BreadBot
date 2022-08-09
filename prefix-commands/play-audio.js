@@ -15,7 +15,7 @@ module.exports = {
 
         let url;
         // remove correct amount for url depending on command name being alias or not
-        commandName === 'yt-audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(4) + ' official audio';
+        commandName === 'yt-audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(5) + ' official audio';
         console.log(url);
 
         const result = await client.player.search(url, {
