@@ -3,9 +3,9 @@ const { EmbedBuilder } = require('discord.js');
 const { QueryType } = require('discord-player');
 
 module.exports = {
-    name: 'yt audio',
+    name: 'play audio',
     aliases: 'yta',
-    description: 'adds "official audio" at the end of the search from youtube *(still in alpha)*    **Alias:  *-yta*',
+    description: 'adds "official audio" at the end of the search from youtube *(still in alpha)*    **Alias:**  *-yta*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
