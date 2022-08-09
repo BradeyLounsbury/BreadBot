@@ -8,21 +8,21 @@ module.exports = {
 		let helpString = 'Here\'s everything I can do!\n\n';
 
 		// prefix commands
-		helpString += '\'-\' Commands:\n';
+		helpString += '**\'-\' Commands:**\n';
 		for (const cmd of client.prefixCommands) {
-			helpString += '-';
+			helpString += '**-';
 			helpString += cmd[1].name;
-			helpString += ': ';
+			helpString += ':** ';
 			helpString += cmd[1].description;
 			helpString += '\n';
 		}
 
 		// slash commands
-		helpString += ('\nSlash Commands:\n');
+		helpString += ('\n**Slash Commands:**\n');
 		for (const cmd of client.slashCommands) {
-			helpString += '/';
+			helpString += '**/';
 			helpString += cmd[1].data.name;
-			helpString += ': ';
+			helpString += ':** ';
 			helpString += cmd[1].data.description;
 			helpString += '\n';
 		}

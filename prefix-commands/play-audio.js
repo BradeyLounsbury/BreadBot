@@ -4,7 +4,7 @@ const { QueryType } = require('discord-player');
 
 module.exports = {
     name: 'plaud',
-    description: 'adds "official audio" at the end of the search from youtube (still in alpha)',
+    description: 'adds "official audio" at the end of the search from youtube *(still in alpha)*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
