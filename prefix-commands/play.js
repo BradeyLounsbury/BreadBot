@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 const { EmbedBuilder } = require('discord.js');
 const { QueryType } = require('discord-player');
 
@@ -25,7 +26,8 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setDescription(`**[${song.title}]** has been added to the Queue`)
             .setThumbnail(song.thumbnail)
-            .setFooter({ text: `Duration: ${song.duration}` });
+            .setFooter({ text: `Duration: ${song.duration}` })
+            .setColor(0x89CFF0); // baby blue
         await message.channel.send({ embeds: [embed] });
 
         if (!queue.playing) await queue.play();

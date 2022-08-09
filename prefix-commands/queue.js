@@ -20,6 +20,8 @@ module.exports = {
         const currentSong = queue.current;
 
         const embed = new EmbedBuilder()
+            // eslint-disable-next-line no-inline-comments
+            .setColor(0x89CFF0) // baby blue
             // eslint-disable-next-line quotes
             .setDescription(`**Currently Playing**\n` + (currentSong ? `\`[${currentSong.duration}]\` ${currentSong.title} -- <@${currentSong.requestedBy.id}>` : 'None') + `\n\n**Queue**\n${queueString}`)
             .setThumbnail(currentSong.setThumbnail);

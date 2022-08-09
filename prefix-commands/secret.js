@@ -5,10 +5,10 @@ module.exports = {
     // eslint-disable-next-line no-unused-vars
     execute: ({ client, commandName, message }) => {
         if (commandName === 'woman') {
-            message.channel.send('Dumb broad');
+            message.channel.send(`||Dumb broad||`);
         }
         else {
-            message.channel.send('Dumb broads');
+            message.channel.send(`||Dumb broads||`);
         }
     },
 };
