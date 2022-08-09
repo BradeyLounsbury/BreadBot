@@ -3,8 +3,8 @@ const { EmbedBuilder } = require('discord.js');
 const { QueryType } = require('discord-player');
 
 module.exports = {
-    name: 'play',
-    description: 'plays audio from youtube video (still in alpha)',
+    name: 'play audio',
+    description: 'adds "official audio" at the end of the search from youtube (still in alpha)',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
@@ -12,7 +12,7 @@ module.exports = {
         const queue = await client.player.createQueue(message.guildId);
         if (!queue.connection) await queue.connect(message.member.voice.channel);
 
-        const url = message.content.substring(6);
+        const url = message.content.substring(12) + ' official audio';
         const result = await client.player.search(url, {
             requestedBy: message.author,
             searchEngine: QueryType.AUTO,
