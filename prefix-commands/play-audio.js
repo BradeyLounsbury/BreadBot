@@ -20,7 +20,7 @@ module.exports = {
 
         const result = await client.player.search(url, {
             requestedBy: message.author,
-            searchEngine: QueryType.YOUTUBE_SEARCH,
+            searchEngine: QueryType.AUTO,
         });
 
         if (result.tracks.length === 0) return await message.channel.send('No results found :(');
