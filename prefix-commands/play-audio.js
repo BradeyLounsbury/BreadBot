@@ -11,7 +11,11 @@ module.exports = {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
 
         const queue = await client.player.createQueue(message.guildId);
-        if (!queue.connection) await queue.connect(message.member.voice.channel);
+        console.log('created queue in %d', message.guildId);
+        if (!queue.connection) {
+            await queue.connect(message.member.voice.channel);
+            console.log('connected to existing queue');
+        }
 
         let url;
         // remove correct amount for url depending on command name being alias or not
@@ -20,7 +24,7 @@ module.exports = {
 
         const result = await client.player.search(url, {
             requestedBy: message.author,
-            searchEngine: QueryType.AUTO,
+            searchEngine: QueryType.YOUTUBE_SEARCH,
         });
 
         if (result.tracks.length === 0) return await message.channel.send('No results found :(');
