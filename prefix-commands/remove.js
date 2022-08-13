@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
     name: 'remove',
     aliases: 'rl',
-    description: 'removes song at given place in queue *(aliases remove last song)*    **Aliases:**  *-rl* *-remove-last*',
+    description: 'removes song at given place in queue *(aliases remove last song)*    **Alias:**  *-rl*',
     // eslint-disable-next-line no-unused-vars
     execute: async ({ client, commandName, message }) => {
         console.log(commandName);
