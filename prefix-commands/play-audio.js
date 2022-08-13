@@ -10,13 +10,6 @@ module.exports = {
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
 
-        const queue = await client.player.createQueue(message.guildId);
-        console.log('created queue in %d', message.guildId);
-        if (!queue.connection) {
-            await queue.connect(message.member.voice.channel);
-            console.log('connected to existing queue');
-        }
-
         let url;
         // remove correct amount for url depending on command name being alias or not
         commandName === 'yt-audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(5) + ' official audio';
@@ -29,8 +22,21 @@ module.exports = {
 
         if (result.tracks.length === 0) return await message.channel.send('No results found :(');
 
+        const queue = await client.player.createQueue(message.guildId);
+        console.log('created queue in %d', message.guildId);
+
+        try {
+            if (!queue.connection) await queue.connect(message.member.voice.channel);
+        }
+        catch {
+            await client.player.deleteQueue(message.guildId);
+        }
+
         const song = result.tracks[0];
         await queue.addTrack(song);
+
+        if (!queue.playing) await queue.play();
+        // console.log(queue);
 
         const embed = new EmbedBuilder()
             .setDescription(`**[${song.title}]** has been added to the Queue`)
@@ -39,6 +45,6 @@ module.exports = {
             .setColor(0x89CFF0); // baby blue
         await message.channel.send({ embeds: [embed] });
 
-        if (!queue.playing) await queue.play();
+        // console.log(queue);
     },
 };
