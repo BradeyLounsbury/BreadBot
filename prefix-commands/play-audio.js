@@ -22,8 +22,9 @@ module.exports = {
 
         if (result.tracks.length === 0) return await message.channel.send('No results found :(');
 
-        const queue = await client.player.createQueue(message.guildId);
-        console.log('created queue in %d', message.guildId);
+        let queue = await client.player.getQueue(message.guildId);
+        if (!queue || !queue.playing) queue = await client.player.createQueue(message.guildId);
+        // console.log('created queue in %d', message.guildId);
 
         try {
             if (!queue.connection) await queue.connect(message.member.voice.channel);

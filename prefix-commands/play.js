@@ -10,8 +10,15 @@ module.exports = {
     execute: async ({ client, commandName, message }) => {
         if (!message.member.voice.channel) return await message.channel.send('You gotta be inna voice channel');
 
-        const queue = await client.player.createQueue(message.guildId);
-        if (!queue.connection) await queue.connect(message.member.voice.channel);
+        let queue = await client.player.getQueue(message.guildId);
+        if (!queue || !queue.playing) queue = await client.player.createQueue(message.guildId);
+
+        try {
+            if (!queue.connection) await queue.connect(message.member.voice.channel);
+        }
+        catch {
+            await client.player.deleteQueue(message.guildId);
+        }
 
         let url;
         // remove correct amount for url depending on command name being alias or not
