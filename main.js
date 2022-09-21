@@ -4,7 +4,9 @@ const { token } = require('./config.json');
 
 // const { REST } = require("@discordjs/rest");
 // const { Routes } = require("discord-api-types/v9");
-const { Player } = require('discord-player');
+const { DisTube } = require('distube');
+// const { SoundCloudPlugin } = require('@distube/soundcloud');
+// const { SpotifyPlugin } = require('@distube/spotify');
 
 const client = new Client({ intents: [
 	GatewayIntentBits.Guilds,
@@ -36,17 +38,18 @@ for (const file of prefixCommandFiles) {
 // messages that start with this trigger the bot
 const prefix = '-';
 
-client.player = new Player(client, {
-    ytdlOptions: {
-        quality: 'highestaudio',
-        highWaterMark: 1 << 25,
-    },
+// distube init
+const distube = new DisTube(client, {
+	leaveOnEmpty: true,
+	leaveOnFinish: false,
+	leaveOnStop: true,
+	emptyCooldown: 20,
+	nsfw: true,
 });
-
 
 // console log
 client.once('ready', () => {
-    console.log('BreadBot is online\n');
+    console.log('BreadBot is online now using Distube\n');
 });
 
 // slash command handling
@@ -61,7 +64,7 @@ client.on('interactionCreate', interaction => {
 
 		try {
 			await interaction.deferReply({ ephemeral: true });
-			await command.execute({ client, interaction });
+			await command.execute({ client, interaction, distube, status });
 			console.log(`executed ${interaction.commandName}`);
 		}
 		catch (error) {
@@ -86,7 +89,7 @@ client.on('messageCreate', message => {
 		if (!command) return;
 
 		try {
-			command.execute({ client, commandName, message });
+			command.execute({ client, commandName, message, distube });
 			console.log(`executed ${commandName}`);
 		}
 		catch (error) {
@@ -96,6 +99,75 @@ client.on('messageCreate', message => {
 	}
 	handleCommand();
 });
+
+// distube settings
+const status = queue =>
+	`Volume: \`${queue.volume}%\` | Filter: \`${
+		queue.filters.names.join(', ') || 'Off'
+	}\` | Loop: \`${
+		queue.repeatMode
+			? queue.repeatMode === 2
+				? 'All Queue'
+				: 'This Song'
+			: 'Off'
+	}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``;
+
+distube
+    .on('playSong', (queue, song) =>
+        queue.textChannel?.send(
+            `Playing \`${song.name}\` - \`${
+                song.formattedDuration
+            }\`\nRequested by: ${song.user}`,
+        ),
+    )
+    .on('addSong', (queue, song) =>
+        queue.textChannel?.send(
+            `Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`,
+        ),
+    )
+    .on('addList', (queue, playlist) =>
+        queue.textChannel?.send(
+            `Added \`${playlist.name}\` playlist (${
+                playlist.songs.length
+            } songs) to queue`,
+        ),
+    )
+    .on('error', (textChannel, e) => {
+        console.error(e);
+        textChannel.send(
+            `An error encountered: ${e.message.slice(0, 2000)}`,
+        );
+    })
+    .on('empty', queue =>
+        queue.textChannel?.send(
+            'The voice channel is empty! Leaving the voice channel...',
+        ),
+    )
+    // DisTubeOptions.searchSongs > 1
+    .on('searchResult', (message, result) => {
+        let i = 0;
+        message.channel.send(
+            `**Choose an option from below**\n${result
+                .map(
+                    song =>
+                    `**${++i}**. ${song.name} - \`${
+                            song.formattedDuration
+                        }\``,
+                )
+                .join(
+                    '\n',
+            )}\n*Enter anything else or wait 30 seconds to cancel*`,
+        );
+    })
+    .on('searchCancel', message =>
+        message.channel.send('Searching canceled'),
+    )
+    .on('searchInvalidAnswer', message =>
+        message.channel.send('Invalid number of result.'),
+    )
+    .on('searchNoResult', message =>
+        message.channel.send('No result found!'),
+    );
 
 // keep at end
 client.login(token);
