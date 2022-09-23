@@ -9,16 +9,24 @@ module.exports = {
         const queue = distube.getQueue(message);
         if (!queue) return message.channel.send('No queue currently :(');
 
+        let currentSong;
+        let currentThumb;
         const queueString = queue.songs.slice(0, queue.songs.length).map((song, i) => {
-            return `**${ i + 1 } \`[${song.duration}]\` ${song.name} -- <@${song.user}>**`;
+            if (i === 0) {
+                currentSong = (`**\`[${song.formattedDuration}]\`** *${song.name}* -- <${song.user}>`);
+                currentThumb = song.thumbnail;
+            }
+            else {
+                return `**${ i + 1 } \`[${song.formattedDuration}]\`** *${song.name}* -- <${song.user}>`;
+            }
         }).join('\n');
 
         const embed = new EmbedBuilder()
             // eslint-disable-next-line no-inline-comments
             .setColor(0x89CFF0) // baby blue
             // eslint-disable-next-line quotes
-            .setDescription(`**Currently Playing**\n` + (queue.song.at(0) ? `\`[${queue.song.at(0).duration}]\` ${queue.song.at(0).name} -- <@${queue.song[0].user}>` : 'None') + `\n\n**Queue**\n${queueString}`)
-            .setThumbnail(queue.song[0].thumbnail);
+            .setDescription(`**Now Playing**\n` + currentSong + `\n\n**Up Next**${queueString}`)
+            .setThumbnail(currentThumb.thumbnail);
         await message.channel.send({ embeds: [embed] });
     },
 };
