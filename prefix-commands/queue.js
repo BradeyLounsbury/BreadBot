@@ -9,7 +9,7 @@ module.exports = {
         const queue = distube.getQueue(message);
         if (!queue) return message.channel.send('No queue currently :(');
 
-        const queueString = queue.songs.shift().map((song, i) => {
+        const queueString = queue.songs.slice(0, queue.songs.length).map((song, i) => {
             return `**${ i + 1 } \`[${song.duration}]\` ${song.name} -- <@${song.user}>**`;
         }).join('\n');
 
