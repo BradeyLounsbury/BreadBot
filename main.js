@@ -1,6 +1,8 @@
+/* eslint-disable no-inline-comments */
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
+const { EmbedBuilder } = require('discord.js');
 
 // const { REST } = require("@discordjs/rest");
 // const { Routes } = require("discord-api-types/v9");
@@ -113,16 +115,28 @@ const status = queue =>
 	}\` | Autoplay: \`${queue.autoplay ? 'On' : 'Off'}\``;
 
 distube
-    .on('playSong', (queue, song) =>
-        queue.textChannel?.send(
-            `Playing \`${song.name}\` - \`${
-                song.formattedDuration
-            }\`\nRequested by: ${song.user}`,
-        ),
-    )
+    .on('playSong', (queue, song) => {
+        // queue.textChannel?.send(
+        //     `Playing \`${song.name}\` - \`${
+        //         song.formattedDuration
+        //     }\`\nRequested by: ${song.user}`,
+        // ),
+        const embed = new EmbedBuilder()
+            .setDescription(`**[${song.title}]** is now playing\nRequested by: ${song.user}`)
+            .setThumbnail(song.thumbnail)
+            .setFooter({ text: `Duration: ${song.formattedDuration}` })
+            .setColor(0x89CFF0); // baby blue
+        queue.textChannel.send({ embeds: [embed] });
+    })
     .on('addSong', (queue, song) => {
         if (queue.songs.length > 1) {
-            queue.textChannel?.send(`Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`);
+            // queue.textChannel?.send(`Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`);
+            const embed = new EmbedBuilder()
+                .setDescription(`**[${song.title}]** has been added to the Queue\nRequested by: ${song.user}`)
+                .setThumbnail(song.thumbnail)
+                .setFooter({ text: `Duration: ${song.formattedDuration}` })
+                .setColor(0x89CFF0); // baby blue
+            queue.textChannel.send({ embeds: [embed] });
         }
     })
     .on('addList', (queue, playlist) =>
@@ -140,7 +154,7 @@ distube
     })
     .on('empty', queue =>
         queue.textChannel?.send(
-            'The voice channel is empty! Leaving the voice channel...',
+            'Well this is awkward...',
         ),
     )
     // DisTubeOptions.searchSongs > 1
