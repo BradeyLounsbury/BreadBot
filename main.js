@@ -122,7 +122,7 @@ distube
         //     }\`\nRequested by: ${song.user}`,
         // ),
         const embed = new EmbedBuilder()
-            .setDescription(`**[${song.title}]** is now playing\nRequested by: ${song.user}`)
+            .setDescription(`**[${song.name}]** is now playing\nRequested by: ${song.user}`)
             .setThumbnail(song.thumbnail)
             .setFooter({ text: `Duration: ${song.formattedDuration}` })
             .setColor(0x89CFF0); // baby blue
@@ -132,7 +132,7 @@ distube
         if (queue.songs.length > 1) {
             // queue.textChannel?.send(`Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`);
             const embed = new EmbedBuilder()
-                .setDescription(`**[${song.title}]** has been added to the Queue\nRequested by: ${song.user}`)
+                .setDescription(`**[${song.name}]** has been added to the Queue\nRequested by: ${song.user}`)
                 .setThumbnail(song.thumbnail)
                 .setFooter({ text: `Duration: ${song.formattedDuration}` })
                 .setColor(0x89CFF0); // baby blue
