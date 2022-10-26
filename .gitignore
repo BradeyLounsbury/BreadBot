@@ -2,3 +2,5 @@
 node_modules
 text-formats.txt
 .env
+*.zip
+package-lock.json
