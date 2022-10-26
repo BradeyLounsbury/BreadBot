@@ -1,8 +1,8 @@
 /* eslint-disable no-inline-comments */
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.json');
 const { EmbedBuilder } = require('discord.js');
+require('dotenv').config();
 
 // const { REST } = require("@discordjs/rest");
 // const { Routes } = require("discord-api-types/v9");
@@ -184,4 +184,4 @@ distube
     );
 
 // keep at end
-client.login(token);
+client.login(process.env.token);
