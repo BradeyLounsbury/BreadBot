@@ -17,21 +17,32 @@ module.exports = {
             queue.songs.pop();
         }
         else {
-            const index = parseInt(message.content);
-            queue.songs.splice(index);
+            const index = parseInt(rl);
+            queue.songs.splice(index - 1, 1);
             console.log('removed %d', index);
         }
 
-        const queueString = queue.songs.shift().map((song, i) => {
-            return `**${ i + 1 } \`[${song.duration}]\` ${song.name} -- <@${song.user}>**`;
+        // const queueString = queue.songs.shift().map((song, i) => {
+        //     return `**${ i + 1 } \`[${song.duration}]\` ${song.name} -- <@${song.user}>**`;
+        // }).join('\n');
+        let currentSong;
+        let currentThumb;
+        const queueString = queue.songs.slice(0, queue.songs.length).map((song, i) => {
+            if (i === 0) {
+                currentSong = (`**\`[${song.formattedDuration}]\`** *${song.name}* -- <${song.user}>`);
+                currentThumb = song.thumbnail;
+            }
+            else {
+                return `**${ i + 1 } \`[${song.formattedDuration}]\`** *${song.name}* -- <${song.user}>`;
+            }
         }).join('\n');
 
         const embed = new EmbedBuilder()
             // eslint-disable-next-line no-inline-comments
             .setColor(0x89CFF0) // baby blue
             // eslint-disable-next-line quotes
-            .setDescription(`**Currently Playing**\n` + (queue.song[0] ? `\`[${queue.song[0].duration}]\` ${queue.song[0].title} -- <@${queue.song[0].requestedBy.id}>` : 'None') + `\n\n**Queue**\n${queueString}`)
-            .setThumbnail(queue.song[0].thumbnail);
+            .setDescription(`**Now Playing**\n` + currentSong + `\n\n**Up Next**${queueString}`)
+            .setThumbnail(currentThumb.thumbnail);
         await message.channel.send('Here\'s the updated queue');
         await message.channel.send({ embeds: [embed] });
     },
