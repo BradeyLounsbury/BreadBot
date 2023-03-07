@@ -9,7 +9,18 @@ module.exports = {
         const voiceChannel = message.member?.voice?.channel;
 
         let url;
-        commandName === 'play' ? url = message.content.substring(6) : url = message.content.substring(4);
+        if (message.content.startsWith('-')) {
+            commandName === 'play' ? url = message.content.substring(6) : url = message.content.substring(4);
+            console.log('searching for: ' + url);
+        }
+        else {
+            commandName === 'play' ? url = message.content.substring(11) : url = message.content.substring(9);
+            console.log('searching for: ' + url);
+        }
+
+        const results = distube.search(url);
+        const r = await results;
+        url = r[0].url;
         console.log(url);
 
         if (voiceChannel) {

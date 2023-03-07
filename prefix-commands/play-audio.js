@@ -10,8 +10,20 @@ module.exports = {
         const voiceChannel = message.member?.voice?.channel;
 
         let url;
-        // remove correct amount for url depending on command name being alias or not
-        commandName === 'yt-audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(5) + ' official audio';
+        if (message.content.startsWith('-')) {
+            // remove correct amount for url depending on command name being alias or not
+            commandName === 'yt-audio' ? url = message.content.substring(9) + ' official audio' : url = message.content.substring(5) + ' official audio';
+            console.log('searching for: ' + url);
+        }
+        else {
+            // remove correct amount for url depending on command name being alias or not
+            commandName === 'yt-audio' ? url = message.content.substring(14) + ' official audio' : url = message.content.substring(10) + ' official audio';
+            console.log('searching for: ' + url);
+        }
+
+        const results = distube.search(url);
+        const r = await results;
+        url = r[0].url;
         console.log(url);
 
         if (voiceChannel) {
