@@ -18,10 +18,10 @@ module.exports = {
             console.log('searching for: ' + url);
         }
 
-        const results = distube.search(url);
-        const r = await results;
-        url = r[0].url;
-        console.log(url);
+        // const results = distube.search(url);
+        // const r = await results;
+        // url = r[0].url;
+        // console.log(url);
 
         if (voiceChannel) {
             distube.play(voiceChannel, url, {
