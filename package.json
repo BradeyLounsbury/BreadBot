@@ -15,7 +15,7 @@
     "@discordjs/rest": "^1.5.0",
     "@discordjs/voice": "^0.15.0",
     "@distube/ytdl-core": "^4.11.11",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.11.0",
     "distube": "^4.0.4",
     "dotenv": "^16.0.3",
     "libsodium-wrappers": "^0.7.11",
