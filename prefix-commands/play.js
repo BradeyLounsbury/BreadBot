@@ -28,6 +28,10 @@ module.exports = {
                 message,
                 textChannel: message.channel,
                 member: message.member,
+            })
+            .catch((e) => {
+                message.channel.send({ content: e.splice(0, 2000), ephemeral: true });
+                console.log(e);
             });
         }
         else {
