@@ -165,8 +165,9 @@ distube
             'Well this is awkward...',
         ),
     )
-    .on('initQueue', queue => {
-        queue.textChannel.send('queue init');
+    // eslint-disable-next-line no-unused-vars
+    .on('initQueue', (queue) => {
+        // queue.textChannel.send('queue init');
     })
     // DisTubeOptions.searchSongs > 1
     .on('searchResult', (message, result) => {
