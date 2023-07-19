@@ -165,6 +165,9 @@ distube
             'Well this is awkward...',
         ),
     )
+    .on('initQueue', queue => {
+        queue.textChannel.send('queue init');
+    })
     // DisTubeOptions.searchSongs > 1
     .on('searchResult', (message, result) => {
         let i = 0;
