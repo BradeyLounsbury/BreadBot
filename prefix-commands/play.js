@@ -5,7 +5,7 @@ module.exports = {
     aliases: 'yt',
     description: 'plays audio from youtube video *(still in alpha)*    **Alias:**  *-yt*',
     // eslint-disable-next-line no-unused-vars
-    execute: async ({ client, commandName, message, distube }) => {
+    execute: async ({ client, commandName, message, distube, ytPlugin }) => {
         const voiceChannel = message.member?.voice?.channel;
 
         let url;
