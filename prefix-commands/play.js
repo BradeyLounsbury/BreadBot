@@ -5,7 +5,7 @@ module.exports = {
     aliases: 'yt',
     description: 'plays audio from youtube video *(still in alpha)*    **Alias:**  *-yt*',
     // eslint-disable-next-line no-unused-vars
-    execute: async ({ client, commandName, message, distube, ytPlugin }) => {
+    execute: async ({ client, commandName, message, distube }) => {
         const voiceChannel = message.member?.voice?.channel;
 
         let url;
@@ -22,6 +22,7 @@ module.exports = {
         // const r = await results;
         // url = r[0].url;
         // console.log(url);
+        // url = 'file:C:/Users/brade/DiscordBot/BreadBot/downloaded_audio/song.opus';
 
         if (voiceChannel) {
             distube.play(voiceChannel, url, {
@@ -30,7 +31,6 @@ module.exports = {
                 member: message.member,
             })
             .catch((e) => {
-                message.channel.send({ content: e.splice(0, 2000), ephemeral: true });
                 console.log(e);
             });
         }
